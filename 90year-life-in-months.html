@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life in Months</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        input[type="date"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .grid-container {
+            display: flex;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(36, 20px);
+            grid-gap: 2px;
+            margin-right: 10px;
+        }
+        .circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: lightgray;
+            transition: background-color 0.3s ease;
+        }
+        .filled {
+            background-color: #4CAF50;
+        }
+        .year-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 18px;
+            margin-bottom: 2px;
+            color: #666;
+            font-weight: bold;
+        }
+        .years {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .quotes, .call-to-action, .explanation {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .quotes h2, .call-to-action h2, .explanation h2 {
+            color: #333;
+        }
+        .quotes p, .call-to-action p, .explanation p {
+            font-size: 1em;
+            color: #666;
+        }
+        .quotes p {
+            margin-bottom: 10px;
+        }
+        .call-to-action button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visualize Your Life in Months</h1>
+    <p>Welcome! This tool helps you visualize a 90-year human life in months. Each dot represents a month of your life. Reflect on the time you have lived and let it inspire you to make the most of every moment.</p>
+    <p>Select your birthdate below to see how many months you have lived so far. Use this visualization as a reminder to cherish each moment and strive towards your goals.</p>
+    <input type="date" id="birthdate">
+    <button onclick="calculateMonthsLived()">Show Lived Months</button>
+    <div class="container">
+        <div class="grid-container">
+            <div class="grid" id="grid"></div>
+            <div class="years" id="years"></div>
+        </div>
+    </div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <div class="quotes">
+        <h2>Inspirational Quotes to Motivate You</h2>
+        <p>"The best way to predict the future is to create it." – Peter Drucker</p>
+        <p>"Your time is limited, don’t waste it living someone else’s life." – Steve Jobs</p>
+        <p>"The two most powerful warriors are patience and time." – Leo Tolstoy</p>
+    </div>
+
+    <div class="call-to-action">
+        <h2>What Will You Do With Your Time?</h2>
+        <p>Use this tool to reflect on your life and set meaningful goals for the future. Every month is an opportunity to grow, learn, and achieve something great. Time is flying by – don't procrastinate.</p>
+        <button onclick="window.location.href='https://www.instagram.com/mariostrivellas'">Follow Us on Instagram</button>
+    </div>
+
+    <div class="explanation">
+        <h2>Why Visualize Your Life in Months?</h2>
+        <p>This tool helps you understand the finite nature of time and encourages you to make the most of every moment. By visualizing your life in months, you can see how much time you have lived and how quickly time is flying, don't procrastinate anymore! Start that business, read that book, or chase your dreams! Don't let your thoughts stop you!</p>
+    </div>
+
+    <script>
+        // Create grid
+        const grid = document.getElementById('grid');
+        const years = document.getElementById('years');
+        const tooltip = document.getElementById('tooltip');
+
+        for (let i = 0; i < 1080; i++) {
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            circle.addEventListener('mouseover', () => showTooltip(circle, i + 1));
+            circle.addEventListener('mouseout', () => hideTooltip());
+            grid.appendChild(circle);
+
+            if ((i + 1) % 36 === 0) {
+                const year = document.createElement('div');
+                year.className = 'year-marker';
+                year.textContent = ((i + 1) / 36) * 3;
+                years.appendChild(year);
+            }
+        }
+
+        function calculateMonthsLived() {
+            const birthdate = new Date(document.getElementById('birthdate').value);
+            const now = new Date();
+            let monthsLived = (now.getFullYear() - birthdate.getFullYear()) * 12 + now.getMonth() - birthdate.getMonth();
+
+            // Adjust for day of month
+            if (now.getDate() < birthdate.getDate()) {
+                monthsLived--;
+            }
+
+            const circles = document.querySelectorAll('.circle');
+            circles.forEach((circle, index) => {
+                if (index < monthsLived) {
+                     circle.classList.add('filled');
+                } else {
+                    circle.classList.remove('filled');
+                }
+            });
+        }
+
+        function showTooltip(element, monthIndex) {
+            const years = Math.floor(monthIndex / 12);
+            const months = monthIndex % 12;
+            tooltip.style.visibility = 'visible';
+            tooltip.style.opacity = 1;
+            tooltip.style.top = element.getBoundingClientRect().top - 30 + 'px';
+            tooltip.style.left = element.getBoundingClientRect().left + 'px';
+            tooltip.textContent = `${years} Year${years !== 1 ? 's' : ''} and ${months} Month${months !== 1 ? 's' : ''}`;
+        }
+
+        function hideTooltip() {
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = 0;
+        }
+    </script>
+</body>
+</html>
